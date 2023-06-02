@@ -11,6 +11,7 @@ import { navigatorDetector } from "typesafe-i18n/detectors"
 
 import { detectLocale } from "./i18n/i18n-util"
 import { loadLocaleAsync } from "./i18n/i18n-util.async"
+import { autoBlur } from "./lib/dom"
 import App from "./pages/App"
 import { loadConfigToAtom, loadDBToAtom } from "./stores"
 
@@ -28,17 +29,12 @@ const main = async () => {
     await loadDBToAtom()
 
     O.from(document.querySelector("#root"))
+        .result()
         .map(createRoot)
         .tap((root) => root.render(createElement(App)))
+        .tapErr(console.error)
 
-    document.addEventListener("keydown", (evt) => {
-        if (evt.key === "Escape") {
-            const { activeElement } = document
-            if (activeElement instanceof HTMLElement) {
-                activeElement.blur()
-            }
-        }
-    })
+    autoBlur(document)
 }
 
 void main()
