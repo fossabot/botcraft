@@ -65,8 +65,8 @@ const ChatDetail = ({ botName, chatID }: ChatDetailProps) => {
     })
 
     const onChatRemoveClick = useEvent(() => {
-        Router.push("BotNewChat", { botName })
         removeChat(chatID)
+        Router.push("BotNewChat", { botName })
     })
 
     const onMessageCreate = useEvent(async (content: string) => {

@@ -4,7 +4,7 @@ import * as React from "react"
 const Redirect = ({ to }: { to: string }) => {
     const location = useLocation().toString()
 
-    React.useInsertionEffect(() => {
+    React.useLayoutEffect(() => {
         if (to !== location) {
             replaceUnsafe(to)
         }
