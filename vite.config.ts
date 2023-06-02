@@ -14,13 +14,13 @@ const isDev = process.env.NODE_ENV === "development"
 export default defineConfig({
     plugins: [
         react(),
-        // forgetti({
-        //     preset: "react",
-        //     filter: {
-        //         include: "src/(pages|components)/**/*.{ts,js,tsx,jsx}",
-        //         exclude: "node_modules/**/*.{ts,js,tsx,jsx}",
-        //     },
-        // }),
+        forgetti({
+            preset: "react",
+            filter: {
+                include: "src/(pages|components)/**/*.{ts,js,tsx,jsx}",
+                exclude: "node_modules/**/*.{ts,js,tsx,jsx}",
+            },
+        }),
         vanillaExtractPlugin(),
         wasm(),
         topLevelAwait(),
