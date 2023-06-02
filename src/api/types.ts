@@ -1,4 +1,3 @@
-import { stringify } from "telejson"
 import { z } from "zod"
 
 export const ChatMessageSchema = z.object({
@@ -42,39 +41,17 @@ export type ChatCompletionOptions = {
     frequency_penalty: number
 }
 
-export const ChatCompletionErrorSchema = z.object({
-    message: z.string(),
-    type: z.string(),
-    param: z.string(),
-    code: z.string(),
+export const chatCompletionErrorSchema = z.object({
+    error: z.object({
+        message: z.string(),
+        type: z.string(),
+        param: z.string(),
+        code: z.string(),
+    }),
 })
 
-export class ChatCompletionError extends Error implements z.infer<typeof ChatCompletionErrorSchema> {
-    type: string
+export type ChatCompletionError = z.infer<typeof chatCompletionErrorSchema>
 
-    code: string
-
-    param: string
-
-    private constructor(message: string, type: string, code: string, param: string) {
-        super(message)
-        this.name = "ChatCompletionError"
-        this.type = type
-        this.code = code
-        this.param = param
-    }
-
-    static is(value: unknown): value is ChatCompletionError {
-        return ChatCompletionErrorSchema.safeParse(value).success
-    }
-
-    static from(value: unknown): ChatCompletionError {
-        const result = ChatCompletionErrorSchema.safeParse(value)
-
-        if (result.success) {
-            return new ChatCompletionError(result.data.message, result.data.type, result.data.code, result.data.param)
-        }
-
-        return new ChatCompletionError(stringify(value), "unknown", "unknown", "unknown")
-    }
+export const isChatCompletionError = (value: unknown): value is ChatCompletionError => {
+    return chatCompletionErrorSchema.safeParse(value).success
 }

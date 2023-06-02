@@ -3,7 +3,7 @@ import "@/styles/base.css"
 import "@/styles/global.scss"
 import "@/styles/overrides.scss"
 
-import { Option as O } from "@swan-io/boxed"
+import { Option as O } from "ftld"
 import { enableMapSet, setAutoFreeze, setUseStrictShallowCopy } from "immer"
 import { createElement } from "react"
 import { createRoot } from "react-dom/client"
@@ -27,11 +27,9 @@ const main = async () => {
 
     await loadDBToAtom()
 
-    O.fromNullable(document.querySelector("#root"))
+    O.from(document.querySelector("#root"))
         .map(createRoot)
-        .map((root) => root.render(createElement(App)))
-        .toResult(new Error("Could not find element with selector: #root"))
-        .tapError(console.error)
+        .tap((root) => root.render(createElement(App)))
 
     document.addEventListener("keydown", (evt) => {
         if (evt.key === "Escape") {

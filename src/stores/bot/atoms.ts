@@ -1,4 +1,4 @@
-import { Array as A, Dict, Option as O } from "@swan-io/boxed"
+import { Option as O, Result as R, Task } from "ftld"
 import { set } from "idb-keyval"
 import { atom, getDefaultStore } from "jotai"
 import { atomWithImmer } from "jotai-immer"
@@ -41,7 +41,7 @@ store.sub(messagesAtom, () => {
 })
 
 export const chatMetaAtom = atom((get) => {
-    return Dict.values(get(chatsAtom)).reduceRight<ChatMeta[]>((acc, item) => {
+    return Object.values(get(chatsAtom)).reduceRight<ChatMeta[]>((acc, item) => {
         const title = item.title === "" ? "Untitled" : item.title
 
         acc.push({
@@ -54,7 +54,7 @@ export const chatMetaAtom = atom((get) => {
 })
 
 export const messageMetaAtom = atom((get) => {
-    return Dict.values(get(messagesAtom)).map(pick(["id", "Role", "updatedAt"]))
+    return Object.values(get(messagesAtom)).map(pick(["id", "Role", "updatedAt"]))
 })
 
 export const sortedChatsAtom = atom((get) => {
@@ -128,9 +128,7 @@ export const requestChatCompletionAtom = atom(null, async (get, set, id: UUIDSta
         return
     }
 
-    const messages: Omit<MessageItem, "id">[] = A.filterMap(chat.messages, (id) => {
-        return O.fromNullable(get(messagesAtom)[id]).map(omit(["id"]))
-    })
+    const messages: Omit<MessageItem, "id">[] = Object.values(get(messagesAtom)).map(omit(["id"]))
 
     const abortController = new AbortController()
 
@@ -145,6 +143,32 @@ export const requestChatCompletionAtom = atom(null, async (get, set, id: UUIDSta
         content: "",
         role: "assistant",
         updatedAt: Date.now(),
+    }
+
+    const handleError = (error: unknown) => {
+        abortController.abort()
+
+        const message: MessageItem = {
+            id: UUIDStamp(),
+            content: stringify(error),
+            role: "assistant",
+            updatedAt: Date.now(),
+        }
+
+        console.log(message)
+
+        set(messagesAtom, (draft) => {
+            draft[message.id] = message
+        })
+
+        set(chatsAtom, (draft) => {
+            draft[id]?.messages.push(message.id)
+        })
+
+        set(
+            chatCompletionTaskAtom,
+            O.Some<ChatCompletionTask>({ ...taskMeta, type: "error", error: new Error(stringify(error)) }),
+        )
     }
 
     set(messagesAtom, (draft) => {
@@ -176,19 +200,16 @@ export const requestChatCompletionAtom = atom(null, async (get, set, id: UUIDSta
         return
     }
 
-    const stream = await getChatCompletionStream(apiKey.get(), messages, options, {}, abortController.signal)
+    const stream = await Task.from(async () =>
+        getChatCompletionStream(apiKey.unwrap(), messages, options, {}, abortController.signal),
+    ).run()
 
-    if (stream.isError()) {
-        set(
-            chatCompletionTaskAtom,
-            O.Some<ChatCompletionTask>({ ...taskMeta, type: "error", error: stream.getError() }),
-        )
+    if (stream.isErr()) {
+        handleError(stream.unwrapErr())
         return
     }
 
-    const resp = stream.get()
-
-    const reader = resp.getReader()
+    const reader = stream.unwrap().getReader()
 
     const observable = readerToObservable(reader)
 
@@ -203,19 +224,9 @@ export const requestChatCompletionAtom = atom(null, async (get, set, id: UUIDSta
         )
         .subscribe({
             next(event) {
-                const content = event.match({
-                    Ok: (event) => {
-                        if (event === "[DONE]") {
-                            return ""
-                        }
-
-                        return event.choices[0]?.delta?.content ?? ""
-                    },
-                    Error: (error) => {
-                        console.error(error)
-                        return ""
-                    },
-                })
+                // @ts-expect-error FIXME: Fix type
+                // eslint-disable-next-line
+                const content = event.choices[0]?.delta?.content ?? ""
 
                 set(messagesAtom, (draft) => {
                     const message = draft[taskMeta.generatingMessageID]
@@ -229,13 +240,7 @@ export const requestChatCompletionAtom = atom(null, async (get, set, id: UUIDSta
                     chat.updatedAt = Date.now()
                 })
             },
-            error(error: unknown) {
-                abortController.abort()
-                set(
-                    chatCompletionTaskAtom,
-                    O.Some<ChatCompletionTask>({ ...taskMeta, type: "error", error: new Error(stringify(error)) }),
-                )
-            },
+            error: handleError,
             complete() {
                 set(chatCompletionTaskAtom, O.Some<ChatCompletionTask>({ ...taskMeta, type: "done", content: "" }))
             },

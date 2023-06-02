@@ -24,7 +24,7 @@ export const loadDBToAtom = async () => {
 export const loadConfigToAtom = async () => {
     const config = await configManager.loadConfig()
     if (config.isOk()) {
-        const { apiKey } = config.get()
+        const { apiKey } = config.unwrap()
         store.set(apiKeyAtom, apiKey)
         return
     }

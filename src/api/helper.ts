@@ -1,8 +1,8 @@
-import { Result } from "@swan-io/boxed"
+/* eslint-disable functional/no-throw-statements */
 import { parse, stringify } from "telejson"
 
 import type { ChatCompletionChunk, ChatMessage, EventSourceData } from "../api/types"
-import { ChatCompletionChunkSchema, ChatCompletionError, ChatMessageSchema } from "../api/types"
+import { ChatCompletionChunkSchema, ChatMessageSchema } from "../api/types"
 
 export const isChunk = (value: unknown): value is ChatCompletionChunk => {
     return ChatCompletionChunkSchema.safeParse(value).success
@@ -12,7 +12,7 @@ export const isChatMessage = (value: unknown): value is ChatMessage => {
     return ChatMessageSchema.safeParse(value).success
 }
 
-const parseChunk = (chunk: string): Result<EventSourceData, Error> => {
+const parseChunk = (chunk: string): EventSourceData => {
     try {
         const jsonString = chunk
             .split("\n")
@@ -20,22 +20,18 @@ const parseChunk = (chunk: string): Result<EventSourceData, Error> => {
             .join("")
 
         if (jsonString === "[DONE]") {
-            return Result.Ok<EventSourceData>(jsonString)
+            throw new Error(jsonString)
         }
 
         const parsed: unknown = parse(jsonString)
 
         if (isChunk(parsed)) {
-            return Result.Ok<EventSourceData>(parsed)
+            return parsed
         }
 
-        if (ChatCompletionError.is(parsed)) {
-            return Result.Error(ChatCompletionError.from(parsed))
-        }
-
-        return Result.Error(new Error(`Unknown chunk: ${jsonString}`))
+        throw new Error(`Unknown chunk format: ${jsonString}`)
     } catch (error) {
-        return Result.Error(new Error(stringify(error)))
+        throw new Error(stringify(error))
     }
 }
 
