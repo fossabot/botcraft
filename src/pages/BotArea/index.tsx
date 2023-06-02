@@ -16,7 +16,7 @@ import {
     apiKeyAtom,
     DEFAULT_SYSTEM_MESSAGE,
     EMPTY_CHAT_ITEM,
-    recentChatsAtom,
+    sortedChatsAtom,
 } from "@/stores"
 
 import RootLayout from "../RootLayout"
@@ -30,11 +30,11 @@ type BotProps = {
 const RedirectChat = ({ botName }: { botName: string }) => {
     const addMessage = useSetAtom(addMessageAtom)
     const addChat = useSetAtom(addChatAtom)
-    const recentChats = useAtomValue(recentChatsAtom)
+    const sortedChats = useAtomValue(sortedChatsAtom)
 
     // Not recommended to use this hook, but it's okay for this case
     useMountEffect(() => {
-        const firstChat = recentChats[0]
+        const firstChat = sortedChats[0]
 
         if (firstChat) {
             Router.push("BotChat", { botName, chatID: firstChat.id })

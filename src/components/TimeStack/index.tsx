@@ -3,7 +3,6 @@ import { BiMap } from "@rizzzse/bimap"
 import { Link } from "@swan-io/chicane"
 import { formatDistanceToNow } from "date-fns"
 import { PlusIcon } from "lucide-react"
-import { sort } from "rambda"
 import { memo, useMemo } from "react"
 import { useHotkeys } from "react-hotkeys-hook"
 import useEvent from "react-use-event-hook"
@@ -38,12 +37,10 @@ const NewItemButton = ({ title, ...rest }: React.ComponentProps<"button">) => {
 
 const TimeStack = memo(
     ({ items, newItemName, onItemAdd, onItemPin, onItemRemove, onItemUnpin, selected }: TimeStackProps) => {
-        const sorted = useMemo(() => sort((a, b) => b.updatedAt - a.updatedAt, items), [items])
-
         const markers = useMemo(() => {
             const markers: BiMap<string, number> = new BiMap()
 
-            for (const [index, chat] of sorted.entries()) {
+            for (const [index, chat] of items.entries()) {
                 const dateAgo = formatDistanceToNow(chat.updatedAt, { addSuffix: true })
 
                 if (markers.has(dateAgo)) {
@@ -54,7 +51,7 @@ const TimeStack = memo(
             }
 
             return markers
-        }, [sorted])
+        }, [items])
 
         const handleItemAdd = useEvent(() => onItemAdd?.())
 

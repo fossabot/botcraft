@@ -18,9 +18,9 @@ import {
     EMPTY_CHAT_ITEM,
     removeChatAtom,
     requestChatCompletionAtom,
+    sortedChatsAtom,
     updateChatAtom,
     useChat,
-    useChatList,
 } from "@/stores"
 
 import { Layout } from "../Layout"
@@ -39,6 +39,7 @@ const ChatDetail = ({ botName, chatID }: ChatDetailProps) => {
     const contentRef = useRef<HTMLDivElement>(null)
     const [chat] = useChat(chatID)
     const [getChats] = useTransientAtom(chatsAtom)
+    const sortedChats = useAtomValue(sortedChatsAtom)
     const addMessage = useSetAtom(addMessageAtom)
     const addChat = useSetAtom(addChatAtom)
     const updateChat = useSetAtom(updateChatAtom)
@@ -97,14 +98,12 @@ const ChatDetail = ({ botName, chatID }: ChatDetailProps) => {
 
     const shouldSend = useEvent((value: string) => value.trim() !== "" && !isGenerating)
 
-    const data = useChatList()
-
     return (
         <Layout
             asideHeader={botName}
             aside={
                 <TimeStack
-                    items={data}
+                    items={sortedChats}
                     newItemName="New chat"
                     selected={chatID}
                     onItemAdd={onAddChatClick}

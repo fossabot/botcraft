@@ -16,7 +16,7 @@ import type { Remap } from "@/lib/utilityTypes"
 import { UUIDStamp } from "@/lib/uuid"
 
 import { EMPTY_CHAT_ITEM } from "./constants"
-import type { ChatItem, MessageItem } from "./types"
+import type { ChatItem, ChatMeta, MessageItem } from "./types"
 
 const store = getDefaultStore()
 
@@ -41,21 +41,23 @@ store.sub(messagesAtom, () => {
 })
 
 export const chatMetaAtom = atom((get) => {
-    return Dict.values(get(chatsAtom)).map((item) => {
+    return Dict.values(get(chatsAtom)).reduceRight<ChatMeta[]>((acc, item) => {
         const title = item.title === "" ? "Untitled" : item.title
 
-        return {
+        acc.push({
             title,
             ...pick(["id", "updatedAt"], item),
-        }
-    })
+        })
+
+        return acc
+    }, [])
 })
 
 export const messageMetaAtom = atom((get) => {
     return Dict.values(get(messagesAtom)).map(pick(["id", "Role", "updatedAt"]))
 })
 
-export const recentChatsAtom = atom((get) => {
+export const sortedChatsAtom = atom((get) => {
     return sortBy((chat) => -chat.updatedAt, get(chatMetaAtom))
 })
 
