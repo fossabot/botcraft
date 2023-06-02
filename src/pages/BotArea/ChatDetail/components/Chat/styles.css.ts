@@ -1,7 +1,7 @@
 import { style } from "@vanilla-extract/css"
 
 export const container = style({
-    flex: 1,
+    flex: "1 1 auto",
     display: "flex",
     flexFlow: "column nowrap",
     alignItems: "stretch",

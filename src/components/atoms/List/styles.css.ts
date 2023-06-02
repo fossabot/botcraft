@@ -3,12 +3,7 @@ import { globalStyle, style } from "@vanilla-extract/css"
 import { vars } from "@/theme/vars.css"
 
 export const container = style({
-    width: "100%",
-    height: "100%",
-    position: "relative",
-    borderRadius: "0.5rem",
-    color: "rgba(0, 0, 0, 0.8)",
-    fontSize: "14px",
+    flex: "1 1 auto",
 })
 
 export const content = style({

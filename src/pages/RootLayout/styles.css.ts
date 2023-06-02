@@ -9,7 +9,7 @@ export const container = style({
 })
 
 export const main = style({
-    flex: 1,
+    flex: "1 1 auto",
     height: "100%",
 })
 
@@ -40,7 +40,7 @@ export const navHeader = style({
 })
 
 export const navContent = style({
-    flex: 1,
+    flex: "1 1 auto",
     padding: "12px 0",
     width: "100%",
     display: "flex",

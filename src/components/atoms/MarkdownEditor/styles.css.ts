@@ -17,7 +17,7 @@ export const container = style({
 })
 
 export const content = style({
-    flex: 1,
+    flex: "1 1 auto",
 })
 
 globalStyle(`${content} .cm-editor`, {
