@@ -1,4 +1,4 @@
-import{q as In}from"./index-9c956a25.js";import{g as sn,b as yn,a as ni}from"./react-1b326164.js";import{E as Mu}from"./react-error-boundary.esm-830a3b4d.js";const qa=["http","https","mailto","tel"];function Cu(e){const t=(e||"").trim(),n=t.charAt(0);if(n==="#"||n==="/")return t;const r=t.indexOf(":");if(r===-1)return t;let i=-1;for(;++i<qa.length;){const a=qa[i];if(r===a.length&&t.slice(0,a.length).toLowerCase()===a)return t}return i=t.indexOf("?"),i!==-1&&r>i||(i=t.indexOf("#"),i!==-1&&r>i)?t:"javascript:void(0)"}/*!
+import{q as In}from"./index-ee1ca2a8.js";import{g as sn,b as yn,a as ni}from"./react-1b326164.js";import{E as Mu}from"./react-error-boundary.esm-830a3b4d.js";const qa=["http","https","mailto","tel"];function Cu(e){const t=(e||"").trim(),n=t.charAt(0);if(n==="#"||n==="/")return t;const r=t.indexOf(":");if(r===-1)return t;let i=-1;for(;++i<qa.length;){const a=qa[i];if(r===a.length&&t.slice(0,a.length).toLowerCase()===a)return t}return i=t.indexOf("?"),i!==-1&&r>i||(i=t.indexOf("#"),i!==-1&&r>i)?t:"javascript:void(0)"}/*!
  * Determine if an object is a Buffer
  *
  * @author   Feross Aboukhadijeh <https://feross.org>

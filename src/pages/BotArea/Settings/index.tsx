@@ -14,7 +14,7 @@ const Settings = ({ botName }: SettingsProps) => {
     const [apiKey, setApiKey] = useAtom(apiKeyAtom)
 
     return (
-        <Layout header="Bot Settings">
+        <Layout header={`${botName} Settings`}>
             <div className={clsx("prose-sm", css.content)}>
                 <h3>API Key</h3>
                 <input

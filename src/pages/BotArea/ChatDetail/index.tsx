@@ -48,11 +48,6 @@ const ChatDetail = ({ botName, chatID }: ChatDetailProps) => {
     const isGenerating = chatCompletionTask.isSome() && chatCompletionTask.get().type === "pending"
 
     const onAddChatClick = useEvent(() => {
-        if (chat.messages.length === 1 && chat.title === "") {
-            document.querySelector<HTMLElement>("#chat-title")?.focus()
-            return
-        }
-
         const preCreatedMessage: MessageItem = {
             id: UUIDStamp(),
             role: "system",
