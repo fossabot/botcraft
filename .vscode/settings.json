@@ -1,0 +1,6 @@
+{
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "search.exclude": {
+        "**/dist": true
+    }
+}

@@ -1,0 +1,43 @@
+html {
+    min-width: 320px;
+    height: -webkit-fill-available;
+
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+    ::-webkit-scrollbar {
+        scrollbar-gutter: stable;
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #ddd;
+        border-radius: 0;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #fff;
+    }
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    height: -webkit-fill-available;
+    background: #f1f2f2;
+}
+
+#root {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    a {
+        user-drag: none;
+        -webkit-user-drag: none;
+    }
+
+    pre,
+    code {
+        font-family: iosevka, 'Iosevka Web', monospace;
+    }
+}
