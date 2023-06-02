@@ -1,5 +1,6 @@
 import { produce } from "immer"
 import { useAtomValue, useSetAtom } from "jotai"
+import { useTransientAtom } from "jotai-game"
 import { lazy, useRef } from "react"
 import useEvent from "react-use-event-hook"
 
@@ -11,6 +12,7 @@ import {
     addChatAtom,
     addMessageAtom,
     chatCompletionTaskAtom,
+    chatsAtom,
     DEFAULT_CHAT_COMPLETION_OPTIONS,
     DEFAULT_SYSTEM_MESSAGE,
     EMPTY_CHAT_ITEM,
@@ -36,6 +38,7 @@ type ChatDetailProps = {
 const ChatDetail = ({ botName, chatID }: ChatDetailProps) => {
     const contentRef = useRef<HTMLDivElement>(null)
     const [chat] = useChat(chatID)
+    const [getChats] = useTransientAtom(chatsAtom)
     const addMessage = useSetAtom(addMessageAtom)
     const addChat = useSetAtom(addChatAtom)
     const updateChat = useSetAtom(updateChatAtom)
@@ -65,8 +68,14 @@ const ChatDetail = ({ botName, chatID }: ChatDetailProps) => {
     })
 
     const onChatRemoveClick = useEvent(() => {
-        removeChat(chatID)
+        const chats = getChats()
+        const isLast = Object.keys(chats).length === 1
+        // TODO: Allow safe removal of last chat
+        if (isLast) {
+            return
+        }
         Router.push("BotNewChat", { botName })
+        removeChat(chatID)
     })
 
     const onMessageCreate = useEvent(async (content: string) => {

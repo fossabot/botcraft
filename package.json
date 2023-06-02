@@ -44,6 +44,7 @@
         "idb-keyval": "6.2.1",
         "immer": "10.0.2",
         "jotai": "2.1.0",
+        "jotai-game": "0.1.0",
         "jotai-immer": "0.2.0",
         "katex": "0.16.7",
         "lucide-react": "0.233.0",
