@@ -200,7 +200,7 @@ export const requestChatCompletionAtom = atom(null, async (get, set, id: UUIDSta
         return
     }
 
-    const stream = await Task.from(async () =>
+    const stream = await Task.from(() =>
         getChatCompletionStream(apiKey.unwrap(), messages, options, {}, abortController.signal),
     ).run()
 

@@ -29,19 +29,19 @@ export class ConfigManager<T> {
     }
 
     setConfig<K extends Extract<keyof T, string>>(key: K, value: T[K]) {
-        return Task.from<void, Error>(async () => set(key, value, this.#store)).run()
+        return Task.from<void, Error>(() => set(key, value, this.#store)).run()
     }
 
     setConfigMany(data: Partial<T>) {
-        return Task.from<void, Error>(async () => setMany(Object.entries(data), this.#store)).run()
+        return Task.from<void, Error>(() => setMany(Object.entries(data), this.#store)).run()
     }
 
     deleteConfig<K extends Extract<keyof T, string>>(key: K) {
-        return Task.from<void, Error>(async () => del(key, this.#store)).run()
+        return Task.from<void, Error>(() => del(key, this.#store)).run()
     }
 
     deleteConfigMany(keys: Extract<keyof T, string>[]) {
-        return Task.from<void, Error>(async () => delMany(keys, this.#store)).run()
+        return Task.from<void, Error>(() => delMany(keys, this.#store)).run()
     }
 
     loadConfig() {
@@ -54,6 +54,6 @@ export class ConfigManager<T> {
     }
 
     resetConfig() {
-        return Task.from<void, Error>(async () => clear(this.#store)).run()
+        return Task.from<void, Error>(() => clear(this.#store)).run()
     }
 }
