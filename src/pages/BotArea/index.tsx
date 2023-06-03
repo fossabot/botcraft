@@ -81,7 +81,7 @@ const BotArea = ({ botName }: BotProps) => {
     )
 
     return (
-        <RootLayout nav={<AvatarList selected={botName} />} navFooter={<Text weight="bold">Limina</Text>}>
+        <RootLayout nav={<AvatarList selected={botName} />}>
             <Suspense>{contentView}</Suspense>
         </RootLayout>
     )
