@@ -224,8 +224,10 @@ export const requestChatCompletionAtom = atom(null, async (get, set, id: UUIDSta
         )
         .subscribe({
             next(event) {
-                // @ts-expect-error FIXME: Fix type
-                // eslint-disable-next-line
+                if (event === "[DONE]") {
+                    return
+                }
+
                 const content = event.choices[0]?.delta?.content ?? ""
 
                 set(messagesAtom, (draft) => {
